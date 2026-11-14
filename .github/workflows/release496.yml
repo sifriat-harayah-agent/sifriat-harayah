@@ -15,10 +15,11 @@ jobs:
       - name: Assemble verified signed APK
         run: |
           cat release496.part01 release496.part02 > sifriat-harayah-0.4.96.apk
-          echo 'e0566f174056d0a6017d9821c368e24e5628ca5f472750ef2e6fdee5c0e4f686  sifriat-harayah-0.4.96.apk' | sha256sum -c -
+          echo 'b81db1b2fc445a58631009f9825cb488d471ef8643c598bc4b95e77177968f4e  sifriat-harayah-0.4.96.apk' | sha256sum -c -
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release view v0.4.96 || gh release create v0.4.96 --title 'ספריית הראי״ה 0.4.96' --notes 'להתקנה או לעדכון, הורידו את קובץ ה-APK המצורף. אין להסיר את הגרסה הקודמת לפני העדכון.'
+          gh release edit v0.4.96 --title 'ספריית הראי״ה 0.4.97 - עדכון תיקון' --notes 'עדכון תיקון להפעלה. הקובץ המצורף הוא גרסה 0.4.97, קוד 127. שם הקובץ נשמר כדי שקישורי ההורדה הקיימים ימשיכו לפעול. מתקינים מעל הגרסה הקיימת, ללא הסרה.'
           gh release upload v0.4.96 sifriat-harayah-0.4.96.apk --clobber
