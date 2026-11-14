@@ -1,6 +1,6 @@
 # APK publishing contract
 
-The stable download filename is `sifriat-harayah.apk`.
+The stable download filename is `sifriat-harayah-latest.apk`.
 
 Every future release must upload the newest signed APK with that exact asset name and be marked as the latest non-prerelease. Keep the already-published compatibility asset `sifriat-harayah-0.4.96.apk` on release `v0.4.96`, updating its bytes to the newest APK too while old links remain in circulation. Never leave that URL serving a known-broken build.
 
