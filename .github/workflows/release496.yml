@@ -15,7 +15,7 @@ jobs:
       - name: Assemble verified signed APK
         run: |
           cat release496.part01 release496.part02 > sifriat-harayah-0.4.96.apk
-          echo '65a194b63868a3e6e589e1e8e7b56a0dd1ec1eedab0ce8c242673105e705c020  sifriat-harayah-0.4.96.apk' | sha256sum -c -
+          echo 'e0566f174056d0a6017d9821c368e24e5628ca5f472750ef2e6fdee5c0e4f686  sifriat-harayah-0.4.96.apk' | sha256sum -c -
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
