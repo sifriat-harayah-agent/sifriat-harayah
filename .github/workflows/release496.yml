@@ -23,3 +23,5 @@ jobs:
           gh release view v0.4.96 || gh release create v0.4.96 --title 'ספריית הראי״ה 0.4.96' --notes 'להתקנה או לעדכון, הורידו את קובץ ה-APK המצורף. אין להסיר את הגרסה הקודמת לפני העדכון.'
           gh release edit v0.4.96 --title 'ספריית הראי״ה 0.4.97 - עדכון תיקון' --notes 'עדכון תיקון להפעלה. הקובץ המצורף הוא גרסה 0.4.97, קוד 127. שם הקובץ נשמר כדי שקישורי ההורדה הקיימים ימשיכו לפעול. מתקינים מעל הגרסה הקיימת, ללא הסרה.'
           gh release upload v0.4.96 sifriat-harayah-0.4.96.apk --clobber
+          cp sifriat-harayah-0.4.96.apk sifriat-harayah.apk
+          gh release upload v0.4.96 sifriat-harayah.apk --clobber
