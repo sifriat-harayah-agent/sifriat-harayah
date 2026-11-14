@@ -1,0 +1,24 @@
+name: Publish signed Android release
+on:
+  push:
+    paths:
+      - 'release496.part*'
+      - '.github/workflows/release496.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble verified signed APK
+        run: |
+          cat release496.part01 release496.part02 > sifriat-harayah-0.4.96.apk
+          echo '65a194b63868a3e6e589e1e8e7b56a0dd1ec1eedab0ce8c242673105e705c020  sifriat-harayah-0.4.96.apk' | sha256sum -c -
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view v0.4.96 || gh release create v0.4.96 --title 'ספריית הראי״ה 0.4.96' --notes 'להתקנה או לעדכון, הורידו את קובץ ה-APK המצורף. אין להסיר את הגרסה הקודמת לפני העדכון.'
+          gh release upload v0.4.96 sifriat-harayah-0.4.96.apk --clobber
