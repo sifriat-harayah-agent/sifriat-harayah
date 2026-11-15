@@ -3,19 +3,46 @@ on:
   push:
     paths:
       - 'windows-package.part*'
+      - 'windows-package.sha256'
       - '.github/workflows/windows-only.yml'
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
-  windows:
+  smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble and test Windows executable
+        shell: pwsh
+        run: |
+          $out = [IO.File]::Create("$pwd/sifriat-harayah-windows.zip")
+          foreach ($name in @('windows-package.part01','windows-package.part02','windows-package.part03')) { $inputFile=[IO.File]::OpenRead("$pwd/$name"); $inputFile.CopyTo($out); $inputFile.Close() }
+          $out.Close()
+          Expand-Archive sifriat-harayah-windows.zip extracted
+          $env:HARAYAH_NO_BROWSER='1'
+          $proc=Start-Process "$pwd/extracted/sifriat-harayah.exe" -PassThru
+          try {
+            Start-Sleep -Seconds 2
+            $health=Invoke-WebRequest http://127.0.0.1:17649/desktop-health
+            if ($health.Headers['X-Harayah-Desktop'] -ne '1') { throw 'health marker missing' }
+            $page=Invoke-WebRequest http://127.0.0.1:17649/
+            if ($page.Content -notmatch 'desktop.js') { throw 'desktop entry missing' }
+            $corpus=Invoke-WebRequest http://127.0.0.1:17649/corpus/_catalog.json
+            if ($corpus.StatusCode -ne 200) { throw 'catalog missing' }
+            $welcome=Invoke-WebRequest http://127.0.0.1:17649/platform-welcome.js
+            if ($welcome.StatusCode -ne 200) { throw 'welcome missing' }
+            Write-Host 'Windows EXE started and served entry, catalog and welcome successfully.'
+          } finally { Stop-Process -Id $proc.Id -ErrorAction SilentlyContinue }
+  publish:
+    needs: smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Verify desktop package
         run: |
           cat windows-package.part01 windows-package.part02 windows-package.part03 > sifriat-harayah-windows.zip
-          echo '09de075c8f568851c700d305398681f0be4d16fc468fcd13c282364b36132e86  sifriat-harayah-windows.zip' | sha256sum -c -
+          sha256sum -c windows-package.sha256
           unzip -t sifriat-harayah-windows.zip
       - name: Upload Windows asset only
         env:
