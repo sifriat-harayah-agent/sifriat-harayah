@@ -1,0 +1,23 @@
+name: Publish Windows library
+on:
+  push:
+    paths:
+      - 'windows-package.part*'
+      - '.github/workflows/windows-only.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify desktop package
+        run: |
+          cat windows-package.part01 windows-package.part02 windows-package.part03 > sifriat-harayah-windows.zip
+          echo '09de075c8f568851c700d305398681f0be4d16fc468fcd13c282364b36132e86  sifriat-harayah-windows.zip' | sha256sum -c -
+          unzip -t sifriat-harayah-windows.zip
+      - name: Upload Windows asset only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload v0.4.96 sifriat-harayah-windows.zip --clobber
